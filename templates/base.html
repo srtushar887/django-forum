@@ -43,7 +43,7 @@
             <div class="headernav">
                 <div class="container">
                     <div class="row">
-                        <div class="col-lg-1 col-xs-3 col-sm-2 col-md-2 logo "><a href="index.html"><img src="{% static '/' %}/images/logo.jpg" alt=""  /></a></div>
+                        <div class="col-lg-1 col-xs-3 col-sm-2 col-md-2 logo "><a href="{% url 'index' %}"><img src="{% static '/' %}/images/logo.jpg" alt=""  /></a></div>
                         <div class="col-lg-3 col-xs-9 col-sm-5 col-md-3 selecttopic">
                             <div class="dropdown">
                                 <a data-toggle="dropdown" href="#" >Borderlands 2</a> <b class="caret"></b>
@@ -66,24 +66,36 @@
                         </div>
                         <div class="col-lg-4 col-xs-12 col-sm-5 col-md-4 avt">
                             <div class="stnt pull-left">
+                                {% if user.is_authenticated %}
                                 <a href="{% url 'create_post' %}">
-
                                     <button class="btn btn-primary">Start New Topic</button>
                                 </a>
+                                    {% else %}
+                                     <a href="{% url 'loginUser' %}">
+                                    <button class="btn btn-primary">Start New Topic</button>
+                                </a>
+                                {% endif %} 
+
 
                             </div>
                             <div class="env pull-left"><i class="fa fa-envelope"></i></div>
-
+                             {% if user.is_authenticated %}
                             <div class="avatar pull-left dropdown">
                                 <a data-toggle="dropdown" href="#"><img src="{% static '/' %}/images/avatar.jpg" alt="" /></a> <b class="caret"></b>
                                 <div class="status green">&nbsp;</div>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">My Profile</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url 'my_profile' %}">My Profile</a></li>
                                     <li role="presentation"><a role="menuitem" tabindex="-2" href="#">Inbox</a></li>
-                                    <li role="presentation"><a role="menuitem" tabindex="-3" href="#">Log Out</a></li>
-                                    <li role="presentation"><a role="menuitem" tabindex="-4" href="04_new_account.html">Create account</a></li>
+                                    <li role="presentation">
+                                        <a role="menuitem" tabindex="-3" href="javascript:{document.getElementById('logout').submit()}">Log Out</a>
+                                        <form id="logout" action="{% url 'logout' %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden">
+                                        </form>
+                                    </li>
                                 </ul>
                             </div>
+                        {% endif %}
 
                             <div class="clearfix"></div>
                         </div>
@@ -109,70 +121,15 @@
                                 <div class="divline"></div>
                                 <div class="blocktxt">
                                     <ul class="cats">
-                                        <li><a href="#">Trading for Money <span class="badge pull-right">20</span></a></li>
-                                        <li><a href="#">Vault Keys Giveway <span class="badge pull-right">10</span></a></li>
-                                        <li><a href="#">Misc Guns Locations <span class="badge pull-right">50</span></a></li>
-                                        <li><a href="#">Looking for Players <span class="badge pull-right">36</span></a></li>
-                                        <li><a href="#">Stupid Bugs &amp; Solves <span class="badge pull-right">41</span></a></li>
-                                        <li><a href="#">Video &amp; Audio Drivers <span class="badge pull-right">11</span></a></li>
-                                        <li><a href="#">2K Official Forums <span class="badge pull-right">5</span></a></li>
-                                    </ul>
+                                        {% for cat in category %}
+                                            <li><a href="#">{{ cat.name }} <span class="badge pull-right">{{cat.num_posts}}</span></a></li>
+                                        {% endfor %}
+
+                                       </ul>
                                 </div>
                             </div>
 
-                            <!-- -->
-                            <div class="sidebarblock">
-                                <h3>Poll of the Week</h3>
-                                <div class="divline"></div>
-                                <div class="blocktxt">
-                                    <p>Which game you are playing this week?</p>
-                                    <form action="#" method="post" class="form">
-                                        <table class="poll">
-                                            <tr>
-                                                <td>
-                                                    <div class="progress">
-                                                        <div class="progress-bar color1" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 90%">
-                                                            Call of Duty Ghosts
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="chbox">
-                                                    <input id="opt1" type="radio" name="opt" value="1">
-                                                    <label for="opt1"></label>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="progress">
-                                                        <div class="progress-bar color2" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 63%">
-                                                            Titanfall
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="chbox">
-                                                    <input id="opt2" type="radio" name="opt" value="2" checked>
-                                                    <label for="opt2"></label>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="progress">
-                                                        <div class="progress-bar color3" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 75%">
-                                                            Battlefield 4
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="chbox">
-                                                    <input id="opt3" type="radio" name="opt" value="3">
-                                                    <label for="opt3"></label>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </form>
-                                    <p class="smal">Voting ends on 19th of October</p>
-                                </div>
-                            </div>
-
+                        {% if user.is_authenticated %}
                             <!-- -->
                             <div class="sidebarblock">
                                 <h3>My Active Threads</h3>
@@ -197,6 +154,7 @@
                                     <a href="#">Loud and Brave: Saudi Women Set to Protest Driving Ban</a>
                                 </div>
                             </div>
+                            {% endif %}
 
 
                         </div>
@@ -208,27 +166,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-8 col-xs-12">
-                            <div class="pull-left"><a href="#" class="prevnext"><i class="fa fa-angle-left"></i></a></div>
-                            <div class="pull-left">
-                                <ul class="paginationforum">
-                                    <li class="hidden-xs"><a href="#">1</a></li>
-                                    <li class="hidden-xs"><a href="#">2</a></li>
-                                    <li class="hidden-xs"><a href="#">3</a></li>
-                                    <li class="hidden-xs"><a href="#">4</a></li>
-                                    <li><a href="#">5</a></li>
-                                    <li><a href="#">6</a></li>
-                                    <li><a href="#" class="active">7</a></li>
-                                    <li><a href="#">8</a></li>
-                                    <li class="hidden-xs"><a href="#">9</a></li>
-                                    <li class="hidden-xs"><a href="#">10</a></li>
-                                    <li class="hidden-xs hidden-md"><a href="#">11</a></li>
-                                    <li class="hidden-xs hidden-md"><a href="#">12</a></li>
-                                    <li class="hidden-xs hidden-sm hidden-md"><a href="#">13</a></li>
-                                    <li><a href="#">1586</a></li>
-                                </ul>
-                            </div>
-                            <div class="pull-left"><a href="#" class="prevnext last"><i class="fa fa-angle-right"></i></a></div>
-                            <div class="clearfix"></div>
+
                         </div>
                     </div>
                 </div>
